@@ -1,15 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Blogs from './components/Blogs.jsx'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUserName] = useState("")
-  const [password, setPassword] = useState("")
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -33,73 +37,23 @@ const App = () => {
     }, 5000)
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    console.log('logging in as', username, password)
-    
+  const handleLogin = async (username, password) => {
     try {
-      const user = await loginService.login({
+      const loggedUser = await loginService.login({
         username,
         password
       })
-      console.log(user)
+      console.log('logged in as ', loggedUser.name)
       
       window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
+        'loggedBlogappUser', JSON.stringify(loggedUser)
       )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUserName('')
-      setPassword('')
+      blogService.setToken(loggedUser.token)
+      setUser(loggedUser)
+
     } catch (exception) {
       showNotification('wrong credentials')
     }
-  }
-
-  const handleCreateBlog = async (title, author, url) => {
-    const newBlog = {title, author, url}
-    console.log('sending blog: ', newBlog)
-
-    try {
-      const addedBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(addedBlog))
-      console.log('recieved blog: ', addedBlog)
-      showNotification(`added new blog, ${addedBlog.title}, by ${addedBlog.author || 'Anonymous'}`)
-
-    } catch (exception) {
-      console.log(exception)
-      if (exception.response.status === 400) {
-        showNotification(exception.response.data.error)
-      }
-    }
-
-  }
-
-  const loginForm = () => {
-    return <>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({target}) => setUserName(target.value)}
-        />
-        </div>
-        <div>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({target}) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-      </form>
-    </>
   }
 
   const handleLogout = () => {
@@ -111,26 +65,46 @@ const App = () => {
     showNotification('logged out')
   }
 
-  const blogview = () => {
-    return <>
+  const handleCreateBlog = async (title, author, url) => {
+    const newBlog = {title, author, url}
+    console.log('sending blog: ', newBlog)
+
+    try {
+      const addedBlog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(addedBlog))
+      console.log('received blog: ', addedBlog)
+      blogFormRef.current.toggleVisibility()
+      showNotification(`added new blog, ${addedBlog.title}, by ${addedBlog.author || 'Anonymous'}`)
+
+    } catch (exception) {
+      console.log(exception)
+      if (exception.response.status === 400) {
+        showNotification(exception.response.data.error)
+      }
+    }
+
+  }
+
+  // When not logged in
+  if (!user) return (
+    <div>
+      { notification && <h1>{notification}</h1> }
+      <LoginForm handleLogin={handleLogin} />
+    </div>
+  )
+  // When logged in
+  return (
+    <div>
+      { notification && <h1>{notification}</h1> }
       <h2>blogs</h2>
       <p>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </>
-  }
-
-
-  return (
-    <div>
-      { notification && <h1>{notification}</h1> }
-      {!user && loginForm()}
-      {user && blogview()}
-      {user && <BlogForm handleCreateBlog={handleCreateBlog} />}
+      <Blogs blogs={blogs} />
+      <Togglable buttonLabel='new blog' ref={blogFormRef}>
+        <BlogForm handleCreateBlog={handleCreateBlog} />
+      </Togglable>
     </div>  
   )
 }
