@@ -6,9 +6,9 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
   const [thisBlog, setThisBlog] = useState(blog)
 
   const toggleShowAll = () => setShowAll(!showAll)
-  
+
   const thisUsersBlog = thisBlog.user.username === user?.username
-  
+
 
   const extraInfo = () => (
     <>
@@ -24,9 +24,9 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
     if (changedBlog) setThisBlog(changedBlog)
   }
 
-const handleRemove = async () => {
-  await removeBlog(thisBlog)
-}
+  const handleRemove = async () => {
+    await removeBlog(thisBlog)
+  }
 
   const blogStyle = {
     paddingTop: 10,

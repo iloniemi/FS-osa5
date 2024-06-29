@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   // Getting logged in user from localStorage
@@ -44,7 +44,7 @@ const App = () => {
         password
       })
       console.log('logged in as ', loggedUser.name)
-      
+
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(loggedUser)
       )
@@ -57,8 +57,8 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    console.log(`logged out ${user.name}`);
-    
+    console.log(`logged out ${user.name}`)
+
     window.localStorage.removeItem('loggedBlogappUser')
     blogService.removeToken()
     setUser(null)
@@ -66,7 +66,7 @@ const App = () => {
   }
 
   const handleCreateBlog = async (title, author, url) => {
-    const newBlog = {title, author, url}
+    const newBlog = { title, author, url }
     console.log('sending blog: ', newBlog)
 
     try {
@@ -94,7 +94,7 @@ const App = () => {
       title: blog.title,
       url: blog.url
     }
-    
+
     try {
       const receivedBlog = await blogService.update(blogToSend)
       const blogToReturn = {
@@ -114,7 +114,7 @@ const App = () => {
 
   const removeBlog = async blogToRemove => {
     if (!window.confirm(`Remove ${blogToRemove.title} by ${blogToRemove.author || 'Anonymous'}`)) {
-      return 
+      return
     }
     console.log('removing', blogToRemove)
     try {
@@ -145,7 +145,7 @@ const App = () => {
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleCreateBlog={handleCreateBlog} />
       </Togglable>
-    </div>  
+    </div>
   )
 }
 

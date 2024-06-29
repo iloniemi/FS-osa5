@@ -1,12 +1,12 @@
-import { useState } from "react"
+import { useState } from 'react'
 import InputRow from './InputRow'
 import PropTypes from 'prop-types'
 
-const BlogForm = ({handleCreateBlog}) => {
+const BlogForm = ({ handleCreateBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  
+
 
   const handleNewBlog = (event) => {
     event.preventDefault()
@@ -16,7 +16,7 @@ const BlogForm = ({handleCreateBlog}) => {
 
   return <>
     <h2>create new</h2>
-    
+
     <form onSubmit={handleNewBlog}>
       <InputRow name="Title" value={title} setValue={setTitle}/>
       <InputRow name="Author" value={author} setValue={setAuthor}/>
