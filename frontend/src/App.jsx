@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import Blogs from './components/Blogs.jsx'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -21,6 +20,7 @@ const App = () => {
     )  
   }, [])
 
+  // Getting logged in user from localStorage
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -77,12 +77,52 @@ const App = () => {
       showNotification(`added new blog, ${addedBlog.title}, by ${addedBlog.author || 'Anonymous'}`)
 
     } catch (exception) {
-      console.log(exception)
       if (exception.response.status === 400) {
         showNotification(exception.response.data.error)
       }
     }
+  }
 
+  const addLike = async blog => {
+    console.log('adding a like to blog: ', blog)
+
+    const blogToSend = {
+      id: blog.id,
+      user: blog.user.id, // User as user ID to server
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+    
+    try {
+      const receivedBlog = await blogService.update(blogToSend)
+      const blogToReturn = {
+        ...receivedBlog,
+        user: blog.user // Setting back the full user info
+      }
+      return blogToReturn
+
+    } catch (exception) {
+      // Could show error messages
+      showNotification('something went wrong')
+      if (exception.response.status === 400) {
+        showNotification(exception.response.data.error)
+      }
+    }
+  }
+
+  const removeBlog = async blogToRemove => {
+    if (!window.confirm(`Remove ${blogToRemove.title} by ${blogToRemove.author || 'Anonymous'}`)) {
+      return 
+    }
+    console.log('removing', blogToRemove)
+    try {
+      await blogService.remove(blogToRemove.id)
+      setBlogs(blogs.filter(blog => blog.id !== blogToRemove.id))
+    } catch (exception) {
+      showNotification(exception.response.data.error)
+    }
   }
 
   // When not logged in
@@ -101,7 +141,7 @@ const App = () => {
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </p>
-      <Blogs blogs={blogs} />
+      <Blogs blogs={blogs} addLike={addLike} user={user} removeBlog={removeBlog} />
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
         <BlogForm handleCreateBlog={handleCreateBlog} />
       </Togglable>

@@ -1,17 +1,6 @@
 import { useState } from "react"
-
-
-const InputRow = ({name, value, setValue}) => (
-  <div>
-    {name}
-      <input
-        type="text"
-        value={value}
-        name={name}
-        onChange={({target}) => setValue(target.value)}
-      />      
-  </div>
-)
+import InputRow from './InputRow'
+import PropTypes from 'prop-types'
 
 const BlogForm = ({handleCreateBlog}) => {
   const [title, setTitle] = useState('')
@@ -37,5 +26,8 @@ const BlogForm = ({handleCreateBlog}) => {
   </>
 }
 
+BlogForm.propTypes = {
+  handleCreateBlog: PropTypes.func.isRequired
+}
 
 export default BlogForm
