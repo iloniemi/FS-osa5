@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 
-const InputRow = ({ name, value, setValue }) => (
+const InputRow = ({ name, value, setValue, placeholder }) => (
   <div>
     {name}
     <input
@@ -8,6 +8,7 @@ const InputRow = ({ name, value, setValue }) => (
       value={value}
       name={name}
       onChange={({ target }) => setValue(target.value)}
+      placeholder={placeholder || ''}
     />
   </div>
 )
@@ -15,7 +16,9 @@ const InputRow = ({ name, value, setValue }) => (
 InputRow.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
-  setValue: PropTypes.func.isRequired
+  setValue: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+
 }
 
 export default InputRow

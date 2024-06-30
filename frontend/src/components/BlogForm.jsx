@@ -18,9 +18,9 @@ const BlogForm = ({ handleCreateBlog }) => {
     <h2>create new</h2>
 
     <form onSubmit={handleNewBlog}>
-      <InputRow name="Title" value={title} setValue={setTitle}/>
-      <InputRow name="Author" value={author} setValue={setAuthor}/>
-      <InputRow name="Url" value={url} setValue={setUrl}/>
+      <InputRow name="Title" value={title} setValue={setTitle} placeholder={'type in the title'}/>
+      <InputRow name="Author" value={author} setValue={setAuthor} placeholder={'type in the author'}/>
+      <InputRow name="Url" value={url} setValue={setUrl} placeholder={'type in the url'}/>
       <button type="submit">create</button>
     </form>
   </>

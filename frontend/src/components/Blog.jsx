@@ -37,12 +37,12 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={ blogStyle }>
       <div>
-        {thisBlog.title} {thisBlog.author}
-        <button onClick={toggleShowAll}>{showAll ? 'hide' : 'view'}</button>
+        { thisBlog.title} {thisBlog.author }
+        <button onClick={ toggleShowAll }>{ showAll ? 'hide' : 'view' }</button>
       </div>
-      {showAll && extraInfo()}
+      { showAll && extraInfo() }
     </div>
   )
 }
