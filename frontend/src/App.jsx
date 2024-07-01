@@ -76,7 +76,7 @@ const App = () => {
       setBlogs(blogs.concat(addedBlog))
       console.log('received blog: ', addedBlog)
       blogFormRef.current.toggleVisibility()
-      showNotification(`added new blog, ${addedBlog.title}, by ${addedBlog.author || 'Anonymous'}`)
+      showNotification(`${addedBlog.title} by ${addedBlog.author || 'Anonymous'} added`)
 
     } catch (exception) {
       if (exception.response.status === 400) {
@@ -150,7 +150,7 @@ const App = () => {
       <h2>blogs</h2>
       <p>
         {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
+        <button onClick={handleLogout} data-testid='logout-button' >logout</button>
       </p>
       <Blogs blogs={blogs} addLike={addLike} user={user} removeBlog={removeBlog} />
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
