@@ -3,29 +3,27 @@ import PropTypes from 'prop-types'
 
 const Blog = ({ blog, addLike, user, removeBlog }) => {
   const [showAll, setShowAll] = useState(false)
-  const [thisBlog, setThisBlog] = useState(blog)
 
   const toggleShowAll = () => setShowAll(!showAll)
 
-  const thisUsersBlog = thisBlog.user.username === user?.username
+  const thisUsersBlog = blog.user.username === user?.username
 
 
   const extraInfo = () => (
     <>
-      <div>{thisBlog.url}</div>
-      <div>{`likes ${thisBlog.likes}`}<button onClick={handleLike}>like</button></div>
-      <div>{thisBlog.user.name}</div>
+      <div>{blog.url}</div>
+      <div>{`likes ${blog.likes}`}<button onClick={handleLike}>like</button></div>
+      <div>{blog.user.name}</div>
       { thisUsersBlog && <div><button onClick={handleRemove}>remove</button></div>}
     </>
   )
 
   const handleLike = async () => {
-    const changedBlog = await addLike(thisBlog)
-    if (changedBlog) setThisBlog(changedBlog)
+    const changedBlog = await addLike(blog)
   }
 
   const handleRemove = async () => {
-    await removeBlog(thisBlog)
+    await removeBlog(blog)
   }
 
   const blogStyle = {
@@ -39,7 +37,7 @@ const Blog = ({ blog, addLike, user, removeBlog }) => {
   return (
     <div style={ blogStyle }>
       <div>
-        { thisBlog.title} {thisBlog.author }
+        { blog.title} {blog.author }
         <button onClick={ toggleShowAll }>{ showAll ? 'hide' : 'view' }</button>
       </div>
       { showAll && extraInfo() }

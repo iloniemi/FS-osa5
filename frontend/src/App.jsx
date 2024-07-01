@@ -14,6 +14,8 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const blogsByLikes = (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes
+
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -83,6 +85,7 @@ const App = () => {
     }
   }
 
+
   const addLike = async blog => {
     console.log('adding a like to blog: ', blog)
 
@@ -97,11 +100,19 @@ const App = () => {
 
     try {
       const receivedBlog = await blogService.update(blogToSend)
-      const blogToReturn = {
+      const blogToSet = {
         ...receivedBlog,
         user: blog.user // Setting back the full user info
       }
-      return blogToReturn
+
+      // Updating blogs
+      setBlogs(
+        blogs
+          .filter(b => b.id !== blogToSet.id)
+          .concat(blogToSet)
+          .sort(blogsByLikes))
+
+      showNotification(`${blogToSet.title} now has ${blogToSet.likes} likes`)
 
     } catch (exception) {
       // Could show error messages
